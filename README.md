@@ -22,6 +22,11 @@ What do we expect from you in this test:
 8. Your project should scale;
 9. Your project should be written in Go;
 
+Aside from the programming language, we're not defining anything else as mandatory. The decisions on archtecture, structure, external services and dependencies are all up to you. We just need two things:
+
+* Everything should work out of the box with some kind of documentation on the README;
+* You *must* explain every decision so we can easaly follow your thought process. Use the README for that too;
+
 ### Bonus points
 
 This is *your* project! Everyhing you want to show us just put in here and we'll definitely appreciate it. If you really want to make a good impression, here's some tips:
@@ -33,8 +38,13 @@ This is *your* project! Everyhing you want to show us just put in here and we'll
 * we are developers but we also own the project and our ideas matter
 * commit messages can be an awesome time machine
 
+Don't forget: this is *your* project. Do anything you want with it. You don't agree with the basic structure? Change it! Don't agree with the programming language? Use another one! You can do anything here, we just ask for you to explain why on the README.
+
 ## Submiting this challenge
 
 To submit this challenge you just need to fork this repository and create a pull request with your solution.
 
-# Good luck!
+## Doubts and/or problems
+
+You can open an issue here or you can send us an email.
+
