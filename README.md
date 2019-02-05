@@ -38,7 +38,7 @@ This is *your* project! Everyhing you want to show us just put in here and we'll
 * we are developers but we also own the project and our ideas matter
 * commit messages can be an awesome time machine
 
-Don't forget: this is *your* project. Do anything you want with it. You don't agree with the basic structure? Change it! Don't agree with the programming language? Use another one! You can do anything here, we just ask for you to explain why on the README.
+Don't forget: this is *your* project. Do anything you want with it. You can do anything here, we just ask for you to explain why on the README.
 
 ## Submiting this challenge
 
