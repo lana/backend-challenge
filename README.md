@@ -1,6 +1,6 @@
 # GO Transactions
 
-GO Transaction is an API which stores a complete transaction history for transact  ions between users. For example:
+GO Transaction is an API which stores a complete transaction history for transact  ions between users.
 
 This Application uses PostgreSQL as its Primary Database.
 
