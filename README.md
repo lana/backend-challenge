@@ -2,9 +2,6 @@
 
 GO Transaction is an API which stores a complete transaction history for transact  ions between users. For example:
 
-User  | Amount | When
-1     |  4000  | 20-04-2019
-
 This Application uses PostgreSQL as its Primary Database.
 
 # Dependencies
