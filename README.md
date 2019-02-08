@@ -24,7 +24,6 @@ go get github.com/{package-name}
 
 With JWT, a unique token for each authenticated user is created, this token was included in the header of the subsequent request made to the API server, this method allow us to identify every users that make calls to the API. 
 
-## Deployment
 
 
 
