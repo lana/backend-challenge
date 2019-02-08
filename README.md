@@ -16,7 +16,9 @@ This Application uses PostgreSQL as its Primary Database.
 
 To install any of this package, open terminal and run
 
+`
 go get github.com/{package-name}
+`
 
 ### Authentication
 
