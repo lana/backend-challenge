@@ -6,9 +6,13 @@ This Application uses PostgreSQL as its Primary Database.
 
 # Dependencies
 [gorilla/mux ](https://github.com/gorilla/mux)— A powerful URL router and dispatcher. 
-[jinzhu/gorm ](https://github.com/jinzhu/gorm)— The fantastic ORM library for Golang
-[dgrijalva/jwt-go](https://github.com/dgrijalva/jwt-go) — Used to sign and verify JWT tokens
-[joho/godotenv](https://github.com/joho/godotenv) — Used to load .env files into the project
+
+[jinzhu/gorm ](https://github.com/jinzhu/gorm)— The fantastic ORM library for Golang.
+
+[dgrijalva/jwt-go](https://github.com/dgrijalva/jwt-go) — Used to sign and verify JWT tokens.
+
+[joho/godotenv](https://github.com/joho/godotenv) — Used to load .env files into the project.
+
 
 To install any of this package, open terminal and run
 
