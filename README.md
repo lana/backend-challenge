@@ -1,50 +1,57 @@
-# Lana Backend Challenge
+Besides providing exceptional transportation services, Cabify also runs a physical store which sells 3 products:
 
-For this backend challenge you have to create a simple API in Go. This API will store a complete transaction history for transactions between users. For example:
+``` 
+Code         | Name                |  Price
+-------------------------------------------------
+VOUCHER      | Cabify Voucher      |   5.00€
+TSHIRT       | Cabify T-Shirt      |  20.00€
+MUG          | Cafify Coffee Mug   |   7.50€
+```
 
-User 1 | User 2 | Amount | When
------- | ------ | ------ | -----
-1 | 2 | 10.00 | 2019-01-01
-2 | 1 | 5.00 | 2019-01-01
-1 | 3 | 6.49 | 2019-01-01
+Various departments have insisted on the following discounts:
 
-Remember that this is only an example. You don't need to do exactly this way, in fact, this is not even a good way to solve this challenge.
+ * The marketing department thinks a buy 2 get 1 free promotion will work best (buy two of the same product, get one free), and would like this to only apply to `VOUCHER` items.
 
-What do we expect from you in this test:
+ * The CFO insists that the best way to increase sales is with discounts on bulk purchases (buying x or more of a product, the price of that product is reduced), and requests that if you buy 3 or more `TSHIRT` items, the price per unit should be 19.00€.
 
-1. Your project should be tested;
-2. Your project should compile and run;
-3. Your project should be ready for production;
-4. Your project should be documented;
-5. Your project should be well organized;
-6. Your project should be readable;
-7. Your project should be maintainable;
-8. Your project should scale;
-9. Your project should be written in Go;
+This set of rules to apply may change quite frequently in the future.
 
-Aside from the programming language, we're not defining anything else as mandatory. The decisions on archtecture, structure, external services and dependencies are all up to you. We just need two things:
+Your task is to implement a checkout system for this store.
 
-* Everything should work out of the box with some kind of documentation on the README;
-* You *must* explain every decision so we can easaly follow your thought process. Use the README for that too;
+The system should have differentiated client and server components that communicate over the network.
 
-### Bonus points
+The server should expose the following independent operations:
 
-This is *your* project! Everyhing you want to show us just put in here and we'll definitely appreciate it. If you really want to make a good impression, here's some tips:
+- Create a new checkout basket
+- Add a product to a basket
+- Get the total amount in a basket
+- Remove the basket
 
-* tests are great tools and we love them
-* docker and kubernetes all the way from development to production
-* great developers make great documentations
-* why you would do something manually when it can be automated?
-* we are developers but we also own the project and our ideas matter
-* commit messages can be an awesome time machine
+The server must support concurrent invocations of those operations: any of them may be invoked at any time, while other operations are still being performed, even for the same basket.
 
-Don't forget: this is *your* project. Do anything you want with it. You can do anything here, we just ask for you to explain why on the README.
+The client must connect user input with those operations via the protocol exposed by the server.
 
-## Submiting this challenge
+We don't have any DBAs at Cabify, so the service shouldn't use any external databases of any kind.
 
-To submit this challenge you just need to fork this repository and create a pull request with your solution.
+Using Go, implement a checkout service and its client that fulfils these requirements.
 
-## Doubts and/or problems
+Examples:
 
-You can open an issue here or you can send us an email.
+    Items: VOUCHER, TSHIRT, MUG
+    Total: 32.50€
 
+    Items: VOUCHER, TSHIRT, VOUCHER
+    Total: 25.00€
+
+    Items: TSHIRT, TSHIRT, TSHIRT, VOUCHER, TSHIRT
+    Total: 81.00€
+
+    Items: VOUCHER, TSHIRT, VOUCHER, VOUCHER, MUG, TSHIRT, TSHIRT
+    Total: 74.50€
+
+**The code should:**
+- Build and execute in a Unix operating system.
+- Be written as production-ready code. You will write production code.
+- Be easy to grow and easy to add new functionality.
+- Have notes attached, explaining the solution and why certain things are included and others are left out.
+- If submitted as a compressed package, its size must not exceed 20MB.
