@@ -27,7 +27,7 @@ The server must support concurrent invocations of those operations: any of them 
 
 At this stage, the service shouldn't use any external databases of any kind, but it should be possible to add one easily in the future.
 
-Implement a checkout service and its client that fulfils these requirements.
+Implement a checkout service and its client that fulfills these requirements.
 
 Examples:
 
