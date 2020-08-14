@@ -1,6 +1,6 @@
 Lana has come to conclusion that users are very likely to buy awesome Lana merchandising from a physical store that sells the following 3 products:
 
-``` 
+```
 Code         | Name              |  Price
 -----------------------------------------------
 PEN          | Lana Pen          |   5.00€
@@ -27,7 +27,7 @@ The server must support concurrent invocations of those operations: any of them 
 
 At this stage, the service shouldn't use any external databases of any kind, but it should be possible to add one easily in the future.
 
-Using Go, implement a checkout service and its client that fulfils these requirements.
+Implement a checkout service and its client that fulfils these requirements.
 
 Examples:
 
@@ -45,17 +45,16 @@ Examples:
 
 **The solution should:**
 
-- Be written in Go (let us know if this is your first time!)
 - Build and execute in a Unix operating system.
 - Focus on solving the business problem (less boilerplate!)
 - Have a clear structure.
 - Be easy to grow with new functionality.
-- Not include binaries or dependencies.
+- Use a dependency management tool.
 
 **Bonus Points For:**
 
-- Unit tests
-- Functional tests
+- Be written in Go (let us know if this is your first time!)
+- Unit/Functional tests
 - Dealing with money as integers
 - Formatting money output
 - Useful comments
