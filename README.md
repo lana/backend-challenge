@@ -1,26 +1,22 @@
-Besides providing exceptional transportation services, Cabify also runs a physical store which sells 3 products:
+Lana has come to conclusion that users are very likely to buy awesome Lana merchandising from a physical store that sells the following 3 products:
 
 ``` 
-Code         | Name                |  Price
--------------------------------------------------
-VOUCHER      | Cabify Voucher      |   5.00€
-TSHIRT       | Cabify T-Shirt      |  20.00€
-MUG          | Cafify Coffee Mug   |   7.50€
+Code         | Name              |  Price
+-----------------------------------------------
+PEN          | Lana Pen          |   5.00€
+TSHIRT       | Lana T-Shirt      |  20.00€
+MUG          | Lana Coffee Mug   |   7.50€
 ```
 
 Various departments have insisted on the following discounts:
 
- * The marketing department thinks a buy 2 get 1 free promotion will work best (buy two of the same product, get one free), and would like this to only apply to `VOUCHER` items.
+ * The sales department thinks a buy 2 get 1 free promotion will work best (buy two of the same product, get one free), and would like this to only apply to `PEN` items.
 
- * The CFO insists that the best way to increase sales is with discounts on bulk purchases (buying x or more of a product, the price of that product is reduced), and requests that if you buy 3 or more `TSHIRT` items, the price per unit should be 19.00€.
+ * The CFO insists that the best way to increase sales is with discounts on bulk purchases (buying x or more of a product, the price of that product is reduced), and requests that if you buy 3 or more `TSHIRT` items, the price per unit should be reduced by 25%.
 
-This set of rules to apply may change quite frequently in the future.
+Your task is to implement a simple checkout server and client that communicate over the network.
 
-Your task is to implement a checkout system for this store.
-
-The system should have differentiated client and server components that communicate over the network.
-
-The server should expose the following independent operations:
+We'd expect the server to expose the following independent operations:
 
 - Create a new checkout basket
 - Add a product to a basket
@@ -29,29 +25,42 @@ The server should expose the following independent operations:
 
 The server must support concurrent invocations of those operations: any of them may be invoked at any time, while other operations are still being performed, even for the same basket.
 
-The client must connect user input with those operations via the protocol exposed by the server.
-
-We don't have any DBAs at Cabify, so the service shouldn't use any external databases of any kind.
+At this stage, the service shouldn't use any external databases of any kind, but it should be possible to add one easily in the future.
 
 Using Go, implement a checkout service and its client that fulfils these requirements.
 
 Examples:
 
-    Items: VOUCHER, TSHIRT, MUG
+    Items: PEN, TSHIRT, MUG
     Total: 32.50€
 
-    Items: VOUCHER, TSHIRT, VOUCHER
+    Items: PEN, TSHIRT, PEN
     Total: 25.00€
 
-    Items: TSHIRT, TSHIRT, TSHIRT, VOUCHER, TSHIRT
-    Total: 81.00€
+    Items: TSHIRT, TSHIRT, TSHIRT, PEN, TSHIRT
+    Total: 65.00€
 
-    Items: VOUCHER, TSHIRT, VOUCHER, VOUCHER, MUG, TSHIRT, TSHIRT
-    Total: 74.50€
+    Items: PEN, TSHIRT, PEN, PEN, MUG, TSHIRT, TSHIRT
+    Total: 62.50€
 
-**The code should:**
+**The solution should:**
+
+- Be written in Go (let us know if this is your first time!)
 - Build and execute in a Unix operating system.
-- Be written as production-ready code. You will write production code.
-- Be easy to grow and easy to add new functionality.
-- Have notes attached, explaining the solution and why certain things are included and others are left out.
-- If submitted as a compressed package, its size must not exceed 20MB.
+- Focus on solving the business problem (less boilerplate!)
+- Have a clear structure.
+- Be easy to grow with new functionality.
+- Not include binaries or dependencies.
+
+**Bonus Points For:**
+
+- Unit tests
+- Functional tests
+- Dealing with money as integers
+- Formatting money output
+- Useful comments
+- Documentation
+- Docker images / CI
+- Commit messages (include .git in zip)
+- Thread-safety
+- Clear scalability
