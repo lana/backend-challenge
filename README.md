@@ -49,7 +49,7 @@ Examples:
 - Focus on solving the business problem (less boilerplate!)
 - Have a clear structure.
 - Be easy to grow with new functionality.
-- Use a dependency management tool.
+- Don't include binaries, and use a dependency management tool.
 
 **Bonus Points For:**
 
