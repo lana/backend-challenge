@@ -1,12 +1,17 @@
 package xyz.lana.challenge.robertom.model;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-public class Item {
+@Getter
+public enum Item {
 
-    private String code;
+    PEN("Lana Pen", 500), TSHIRT("Lana T-Shirt", 2000), MUG("Lana Coffee Mug", 750);
+
     private String name;
     private Integer price;
 
+    Item(String name, Integer price) {
+        this.name = name;
+        this.price = price;
+    }
 }

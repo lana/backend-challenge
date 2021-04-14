@@ -3,8 +3,6 @@ package xyz.lana.challenge.robertom.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import xyz.lana.challenge.robertom.exceptions.NotFoundException;
 import xyz.lana.challenge.robertom.model.Basket;
 import xyz.lana.challenge.robertom.model.Item;
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class BasketStorageImplTest {
 
     private static final long NON_EXISTENT_BASKET_ID = -999L;
-    private static final String CODE = "some-code";
+    private static final Item CODE = Item.PEN;
     private static final String NAME = "some-name";
     private static final int PRICE_1 = 1000;
     private static final int PRICE_2 = 2000;
@@ -44,19 +42,18 @@ class BasketStorageImplTest {
     @DisplayName("When adding a new item to an existent basket then it's added")
     void whenAddingANewItemToAnExistentBasketThenItSAdded() {
         Basket basket = basketStorage.create();
-        Item item = item(PRICE_1);
 
-        basketStorage.addItem(basket.getId(), item);
+        basketStorage.addItem(basket.getId(), Item.PEN);
 
         List<Item> basketItems = basketStorage.getAllItems(basket.getId());
 
-        assertThat(basketItems).containsExactly(item);
+        assertThat(basketItems).containsExactly(Item.PEN);
     }
 
     @Test
     @DisplayName("When adding a new item to an non existent basket then it's not added")
     void whenAddingANewItemToAnNonExistentBasketThenItSNotAdded() {
-        Throwable thrown = catchThrowable(() -> basketStorage.addItem(NON_EXISTENT_BASKET_ID, item(PRICE_1)));
+        Throwable thrown = catchThrowable(() -> basketStorage.addItem(NON_EXISTENT_BASKET_ID, Item.PEN));
 
         assertThat(thrown).isExactlyInstanceOf(NotFoundException.class);
     }
@@ -73,15 +70,13 @@ class BasketStorageImplTest {
     @DisplayName("When getting the total amount then all prices from the same basket are added together")
     void whenGettingTheTotalAmountThenAllPricesFromTheSameBasketAreAddedTogether() {
         Basket basket = basketStorage.create();
-        Item item1 = item(PRICE_1);
-        Item item2 = item(PRICE_2);
 
-        basketStorage.addItem(basket.getId(), item1);
-        basketStorage.addItem(basket.getId(), item2);
+        basketStorage.addItem(basket.getId(), Item.PEN);
+        basketStorage.addItem(basket.getId(), Item.MUG);
 
         int total = basketStorage.getTotalAmount(basket.getId());
 
-        assertThat(total).isEqualTo(PRICE_ADDED);
+        assertThat(total).isEqualTo(Item.PEN.getPrice() + Item.MUG.getPrice());
     }
 
     @Test
@@ -101,23 +96,12 @@ class BasketStorageImplTest {
     void whenGettingAllTheItemsInTheBasketThenTheyAreReturnedInAList() {
 
         Basket basket = basketStorage.create();
-        Item item1 = item(PRICE_1);
-        Item item2 = item(PRICE_2);
 
-        basketStorage.addItem(basket.getId(), item1);
-        basketStorage.addItem(basket.getId(), item2);
+        basketStorage.addItem(basket.getId(), Item.PEN);
+        basketStorage.addItem(basket.getId(), Item.MUG);
 
         List<Item> items = basketStorage.getAllItems(basket.getId());
 
-        assertThat(items).containsExactly(item1, item2);
-    }
-
-    private Item item(Integer price) {
-        Item item = new Item();
-        item.setCode(CODE);
-        item.setName(NAME);
-        item.setPrice(price);
-
-        return item;
+        assertThat(items).containsExactly(Item.PEN, Item.MUG);
     }
 }
