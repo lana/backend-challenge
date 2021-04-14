@@ -15,6 +15,8 @@ public interface BasketStorage {
 
     void delete(Long basketId);
 
+    Basket get(Long basketId);
+
     List<Item> getAllItems(Long basketId);
 
 }

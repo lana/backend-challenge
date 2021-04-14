@@ -61,6 +61,14 @@ public class BasketStorageImpl implements BasketStorage {
         map.remove(basketId);
     }
 
+    public Basket get(Long basketId) {
+        Basket basket = map.get(basketId);
+        if (basket == null) {
+            throw new NotFoundException(String.format(BASKET_ID_COULD_NOT_BE_FOUND, basketId));
+        }
+        return basket;
+    }
+
     @Override
     public List<Item> getAllItems(Long basketId) {
         Basket basket = map.get(basketId);

@@ -7,6 +7,6 @@ import xyz.lana.challenge.robertom.model.Item;
 public class AddItemRequest {
 
     private Item code;
-    private int quantity;
+    private int quantity = 1;
 
 }
