@@ -1,4 +1,5 @@
-Lana has come to conclusion that users are very likely to buy awesome Lana merchandising from a physical store that sells the following 3 products:
+Lana has come to conclusion that users are very likely to buy awesome Lana merchandising from a physical store that
+sells the following 3 products:
 
 ```
 Code         | Name              |  Price
@@ -10,9 +11,12 @@ MUG          | Lana Coffee Mug   |   7.50€
 
 Various departments have insisted on the following discounts:
 
- * The sales department thinks a buy 2 get 1 free promotion will work best (buy two of the same product, get one free), and would like this to only apply to `PEN` items.
+* The sales department thinks a buy 2 get 1 free promotion will work best (buy two of the same product, get one free),
+  and would like this to only apply to `PEN` items.
 
- * The CFO insists that the best way to increase sales is with discounts on bulk purchases (buying x or more of a product, the price of that product is reduced), and requests that if you buy 3 or more `TSHIRT` items, the price per unit should be reduced by 25%.
+* The CFO insists that the best way to increase sales is with discounts on bulk purchases (buying x or more of a
+  product, the price of that product is reduced), and requests that if you buy 3 or more `TSHIRT` items, the price per
+  unit should be reduced by 25%.
 
 Your task is to implement a simple checkout server and client that communicate over the network.
 
@@ -23,9 +27,11 @@ We'd expect the server to expose the following independent operations:
 - Get the total amount in a basket
 - Remove the basket
 
-The server must support concurrent invocations of those operations: any of them may be invoked at any time, while other operations are still being performed, even for the same basket.
+The server must support concurrent invocations of those operations: any of them may be invoked at any time, while other
+operations are still being performed, even for the same basket.
 
-At this stage, the service shouldn't use any external databases of any kind, but it should be possible to add one easily in the future.
+At this stage, the service shouldn't use any external databases of any kind, but it should be possible to add one easily
+in the future.
 
 Implement a checkout service and its client that fulfills these requirements.
 
