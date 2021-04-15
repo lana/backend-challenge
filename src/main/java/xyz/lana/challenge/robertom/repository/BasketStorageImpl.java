@@ -16,9 +16,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class BasketStorageImpl implements BasketStorage {
 
+    public static final String BASKET_ID_COULD_NOT_BE_FOUND = "BasketId %d could not be found";
+
     private static final AtomicLong counter = new AtomicLong();
     private static final Map<Long, Basket> map = new LinkedHashMap<>();
-    private static final String BASKET_ID_COULD_NOT_BE_FOUND = "BasketId %d could not be found";
 
     public BasketStorageImpl() {
         counter.set(0);
@@ -49,6 +50,12 @@ public class BasketStorageImpl implements BasketStorage {
     @Override
     public void delete(Long basketId) {
         map.remove(basketId);
+    }
+
+    @Override
+    public void deleteAll() {
+        counter.set(0);
+        map.clear();
     }
 
     public Basket get(Long basketId) {

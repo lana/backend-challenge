@@ -40,7 +40,7 @@ public class BasketController {
         this.currencyFormatter = currencyFormatter;
     }
 
-    @PostMapping(path = "/")
+    @PostMapping
     public ResponseEntity<BasketCreationResponse> create() {
         log.info("Received create basket request");
         Basket basket = basketService.create();
@@ -67,11 +67,11 @@ public class BasketController {
         int totalAmount = basketService.calculateTotal(basketId);
 
         String formattedAmount = currencyFormatter.parse(totalAmount);
-        BasketTotalAmountResponse response = BasketTotalAmountResponse.builder().totalAmount(formattedAmount).build();
+        BasketTotalAmountResponse response = new BasketTotalAmountResponse();
+        response.setTotalAmount(formattedAmount);
 
         return ResponseEntity.ok(response);
     }
-
 
     @DeleteMapping(value = "/{basketId}")
     public ResponseEntity<Void> delete(@PathVariable Long basketId) {
@@ -106,5 +106,4 @@ public class BasketController {
 
         return response;
     }
-
 }

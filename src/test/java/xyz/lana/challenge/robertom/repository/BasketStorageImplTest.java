@@ -59,9 +59,24 @@ class BasketStorageImplTest {
 
         basketStorage.delete(basket.getId());
 
-        Throwable thrown = catchThrowable(() -> basketStorage.getAllItems(basket.getId()));
+        Throwable thrown = catchThrowable(() -> basketStorage.get(basket.getId()));
 
         assertThat(thrown).isExactlyInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("When deleting all baskets then they're deleted from storage")
+    void whenDeletingAllBasketsThenTheyReDeletedFromStorage() {
+        Basket basket1 = basketStorage.create();
+        Basket basket2 = basketStorage.create();
+
+        basketStorage.deleteAll();
+
+        Throwable thrown1 = catchThrowable(() -> basketStorage.get(basket1.getId()));
+        assertThat(thrown1).isExactlyInstanceOf(NotFoundException.class);
+
+        Throwable thrown2 = catchThrowable(() -> basketStorage.get(basket2.getId()));
+        assertThat(thrown2).isExactlyInstanceOf(NotFoundException.class);
     }
 
     @Test
