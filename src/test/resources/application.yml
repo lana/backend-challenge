@@ -1,0 +1,8 @@
+basket:
+  discounts:
+    buy-two-get-one-free:
+      enable: true
+      apply-to: PEN # comma separated values
+    buy-three-or-more-get-twenty-five-percent-discount:
+      enable: true
+      apply-to: TSHIRT # comma separated values
