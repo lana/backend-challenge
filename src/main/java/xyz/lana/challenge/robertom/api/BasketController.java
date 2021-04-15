@@ -6,18 +6,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.lana.challenge.robertom.api.request.AddItemRequest;
-import xyz.lana.challenge.robertom.api.response.BasketResponse;
+import xyz.lana.challenge.robertom.api.response.BasketCreationResponse;
+import xyz.lana.challenge.robertom.api.response.BasketTotalAmountResponse;
 import xyz.lana.challenge.robertom.converter.CurrencyFormatter;
 import xyz.lana.challenge.robertom.model.Basket;
 import xyz.lana.challenge.robertom.service.BasketService;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
@@ -39,7 +41,7 @@ public class BasketController {
     }
 
     @PostMapping(path = "/")
-    public ResponseEntity<BasketResponse> create() {
+    public ResponseEntity<BasketCreationResponse> create() {
         log.info("Received create basket request");
         Basket basket = basketService.create();
         if (basket == null) {
@@ -52,7 +54,7 @@ public class BasketController {
 
     @PatchMapping(value = "/{basketId}")
     public ResponseEntity<Void> addItem(@PathVariable Long basketId,
-                                        @ModelAttribute AddItemRequest addItemRequest) {
+                                        @RequestBody @Valid AddItemRequest addItemRequest) {
         log.info("Received addItem request. basketId={}, addItemRequest={}", basketId, addItemRequest);
         basketService.addItem(basketId, addItemRequest);
 
@@ -60,11 +62,14 @@ public class BasketController {
     }
 
     @GetMapping(value = "/total/{basketId}")
-    public ResponseEntity<String> getTotalAmount(@PathVariable Long basketId) {
+    public ResponseEntity<BasketTotalAmountResponse> getTotalAmount(@PathVariable Long basketId) {
         log.info("Received getTotalAmount bucket request. basketId={}", basketId);
         int totalAmount = basketService.calculateTotal(basketId);
 
-        return ResponseEntity.ok(currencyFormatter.parse(totalAmount));
+        String formattedAmount = currencyFormatter.parse(totalAmount);
+        BasketTotalAmountResponse response = BasketTotalAmountResponse.builder().totalAmount(formattedAmount).build();
+
+        return ResponseEntity.ok(response);
     }
 
 
@@ -87,15 +92,15 @@ public class BasketController {
         return ResponseEntity.ok(basket);
     }
 
-    private BasketResponse failedBasketResponse() {
-        BasketResponse response = new BasketResponse();
+    private BasketCreationResponse failedBasketResponse() {
+        BasketCreationResponse response = new BasketCreationResponse();
         response.setResponseMsg(BASKET_COULD_NOT_BE_CREATED);
 
         return response;
     }
 
-    private BasketResponse successBasketResponse(Long id) {
-        BasketResponse response = new BasketResponse();
+    private BasketCreationResponse successBasketResponse(Long id) {
+        BasketCreationResponse response = new BasketCreationResponse();
         response.setId(id);
         response.setResponseMsg(BASKET_CREATED_SUCCESSFULLY);
 
@@ -103,4 +108,3 @@ public class BasketController {
     }
 
 }
-

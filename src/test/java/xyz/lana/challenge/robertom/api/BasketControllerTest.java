@@ -9,7 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import xyz.lana.challenge.robertom.api.request.AddItemRequest;
-import xyz.lana.challenge.robertom.api.response.BasketResponse;
+import xyz.lana.challenge.robertom.api.response.BasketCreationResponse;
+import xyz.lana.challenge.robertom.api.response.BasketTotalAmountResponse;
 import xyz.lana.challenge.robertom.converter.CurrencyFormatter;
 import xyz.lana.challenge.robertom.model.Basket;
 import xyz.lana.challenge.robertom.model.Item;
@@ -19,9 +20,9 @@ import java.net.URI;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
-import static xyz.lana.challenge.robertom.api.BasketController.*;
+import static xyz.lana.challenge.robertom.api.BasketController.BASKET_COULD_NOT_BE_CREATED;
+import static xyz.lana.challenge.robertom.api.BasketController.BASKET_CREATED_SUCCESSFULLY;
 
 @ExtendWith(MockitoExtension.class)
 class BasketControllerTest {
@@ -44,9 +45,9 @@ class BasketControllerTest {
     @Test
     @DisplayName("When basket is successfully created then status is 201 created")
     void whenBasketIsSuccessfullyCreatedThenStatusIs201Created() {
-        when(basketService.create()).thenReturn(basket(BASKET_ID));
+        when(basketService.create()).thenReturn(basket());
 
-        ResponseEntity<BasketResponse> response = basketController.create();
+        ResponseEntity<BasketCreationResponse> response = basketController.create();
 
         verify(basketService, times(1)).create();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -55,9 +56,9 @@ class BasketControllerTest {
     @Test
     @DisplayName("When basket is successfully created then location is returned")
     void whenBasketIsSuccessfullyCreatedThenLocationIsReturned() {
-        when(basketService.create()).thenReturn(basket(BASKET_ID));
+        when(basketService.create()).thenReturn(basket());
 
-        ResponseEntity<BasketResponse> response = basketController.create();
+        ResponseEntity<BasketCreationResponse> response = basketController.create();
 
         URI location = URI.create("/api/basket/" + BASKET_ID);
         assertThat(response.getHeaders().getLocation()).isEqualTo(location);
@@ -66,9 +67,9 @@ class BasketControllerTest {
     @Test
     @DisplayName("When basket is created successfully then parameters are the expected")
     void whenBasketIsCreatedSuccessfullyThenParametersAreTheExpected() {
-        when(basketService.create()).thenReturn(basket(BASKET_ID));
+        when(basketService.create()).thenReturn(basket());
 
-        ResponseEntity<BasketResponse> response = basketController.create();
+        ResponseEntity<BasketCreationResponse> response = basketController.create();
 
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getId()).isEqualTo(BASKET_ID);
@@ -80,7 +81,7 @@ class BasketControllerTest {
     void whenBasketCannotBeCreatedThenFailedResponse() {
         when(basketService.create()).thenReturn(null);
 
-        ResponseEntity<BasketResponse> response = basketController.create();
+        ResponseEntity<BasketCreationResponse> response = basketController.create();
 
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getId()).isNull();
@@ -92,7 +93,7 @@ class BasketControllerTest {
     void whenBasketCannotBeCreatedThenErrorStatus() {
         when(basketService.create()).thenReturn(null);
 
-        ResponseEntity<BasketResponse> response = basketController.create();
+        ResponseEntity<BasketCreationResponse> response = basketController.create();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -110,7 +111,7 @@ class BasketControllerTest {
     @Test
     @DisplayName("When adding item then service is called")
     void whenAddingItemThenServiceIsCalled() {
-        AddItemRequest addItemRequest = addItemRequest(Item.PEN, 1);
+        AddItemRequest addItemRequest = addItemRequest();
 
         basketController.addItem(BASKET_ID, addItemRequest);
 
@@ -120,7 +121,7 @@ class BasketControllerTest {
     @Test
     @DisplayName("When adding item then status is 204 no content")
     void whenAddingItemThenStatusIs204NoContent() {
-        AddItemRequest addItemRequest = addItemRequest(Item.PEN, 1);
+        AddItemRequest addItemRequest = addItemRequest();
 
         ResponseEntity<Void> response = basketController.addItem(BASKET_ID, addItemRequest);
 
@@ -150,9 +151,21 @@ class BasketControllerTest {
     void whenGettingBasketTotalAmountThenStatusIs200Ok() {
         when(basketService.calculateTotal(BASKET_ID)).thenReturn(1000);
 
-        ResponseEntity<String> response = basketController.getTotalAmount(BASKET_ID);
+        ResponseEntity<BasketTotalAmountResponse> response = basketController.getTotalAmount(BASKET_ID);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("When getting basket total amount then response contains the expected result")
+    void whenGettingBasketTotalAmountThenResponseContainsTheExpectedResult() {
+        when(basketService.calculateTotal(BASKET_ID)).thenReturn(1000);
+        when(currencyFormatter.parse(1000)).thenReturn("10.00€");
+
+        ResponseEntity<BasketTotalAmountResponse> response = basketController.getTotalAmount(BASKET_ID);
+
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getTotalAmount()).isEqualTo("10.00€");
     }
 
     @Test
@@ -182,7 +195,7 @@ class BasketControllerTest {
     @Test
     @DisplayName("When getting existing basket then status is 200 ok")
     void whenGettingExistingBasketThenStatusIs200Ok() {
-        when(basketService.get(BASKET_ID)).thenReturn(basket(BASKET_ID));
+        when(basketService.get(BASKET_ID)).thenReturn(basket());
         
         ResponseEntity<Basket> response = basketController.get(BASKET_ID);
         
@@ -202,7 +215,7 @@ class BasketControllerTest {
     @Test
     @DisplayName("When getting existing basket then basket is returned")
     void whenGettingExistingBasketThenBasketIsReturned() {
-        Basket basket = basket(BASKET_ID, Item.PEN);
+        Basket basket = basket(Item.PEN);
 
         when(basketService.get(BASKET_ID)).thenReturn(basket);
 
@@ -214,17 +227,17 @@ class BasketControllerTest {
 
     }
 
-    private AddItemRequest addItemRequest(Item code, int quantity) {
+    private AddItemRequest addItemRequest() {
         AddItemRequest addItemRequest = new AddItemRequest();
-        addItemRequest.setCode(code);
-        addItemRequest.setQuantity(quantity);
+        addItemRequest.setCode(Item.PEN.getName());
+        addItemRequest.setQuantity(1);
 
         return addItemRequest;
     }
 
-    private Basket basket(Long id, Item... items){
+    private Basket basket(Item... items){
         Basket basket = new Basket();
-        basket.setId(id);
+        basket.setId(BasketControllerTest.BASKET_ID);
         basket.setItems(Arrays.asList(items));
 
         return basket;

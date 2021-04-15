@@ -11,16 +11,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class BasketStorageImplTest {
 
     private static final long NON_EXISTENT_BASKET_ID = -999L;
-    private static final Item CODE = Item.PEN;
-    private static final String NAME = "some-name";
-    private static final int PRICE_1 = 1000;
-    private static final int PRICE_2 = 2000;
-    private static final int PRICE_ADDED = PRICE_1 + PRICE_2;
 
     private BasketStorage basketStorage;
 
@@ -56,27 +50,6 @@ class BasketStorageImplTest {
         Throwable thrown = catchThrowable(() -> basketStorage.addItem(NON_EXISTENT_BASKET_ID, Item.PEN));
 
         assertThat(thrown).isExactlyInstanceOf(NotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("When getting the total amount for a non existent basket then error")
-    void whenGettingTheTotalAmountForANonExistentBasketThenError() {
-        Throwable thrown = catchThrowable(() -> basketStorage.getTotalAmount(NON_EXISTENT_BASKET_ID));
-
-        assertThat(thrown).isExactlyInstanceOf(NotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("When getting the total amount then all prices from the same basket are added together")
-    void whenGettingTheTotalAmountThenAllPricesFromTheSameBasketAreAddedTogether() {
-        Basket basket = basketStorage.create();
-
-        basketStorage.addItem(basket.getId(), Item.PEN);
-        basketStorage.addItem(basket.getId(), Item.MUG);
-
-        int total = basketStorage.getTotalAmount(basket.getId());
-
-        assertThat(total).isEqualTo(Item.PEN.getPrice() + Item.MUG.getPrice());
     }
 
     @Test

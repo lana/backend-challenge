@@ -11,8 +11,6 @@ public interface BasketStorage {
 
     void addItem(Long basketId, Item item);
 
-    int getTotalAmount(Long basketId);
-
     void delete(Long basketId);
 
     Basket get(Long basketId);

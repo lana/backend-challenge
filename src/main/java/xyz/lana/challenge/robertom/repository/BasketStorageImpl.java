@@ -47,16 +47,6 @@ public class BasketStorageImpl implements BasketStorage {
     }
 
     @Override
-    public int getTotalAmount(Long basketId) {
-        Basket basket = map.get(basketId);
-        if (basket == null) {
-            throw new NotFoundException(String.format(BASKET_ID_COULD_NOT_BE_FOUND, basketId));
-        }
-        return basket.getItems().stream()
-                .reduce(0, (subtotal, item) -> subtotal + item.getPrice(), Integer::sum);
-    }
-
-    @Override
     public void delete(Long basketId) {
         map.remove(basketId);
     }
