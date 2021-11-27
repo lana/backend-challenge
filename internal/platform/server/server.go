@@ -33,9 +33,12 @@ func (s *Server) Run() error {
 
 func (s *Server) registerRoutes() {
 	s.engine.GET("/health", handler.CheckHandler())
-	contact := s.engine.Group("/baskets")
+	basket := s.engine.Group("/baskets")
 	{
-		contact.POST("", handler.CreateBasketHandler(s.service))
-		contact.GET("/:id", handler.GetBasketHandler(s.service))
+		basket.POST("", handler.CreateBasketHandler(s.service))
+		basket.GET("/:id", handler.GetBasketHandler(s.service))
+		basket.DELETE(":id", handler.RemoveBasketHandler(s.service))
+		basket.POST("/:id/products", handler.AddProductHandler(s.service))
+		basket.DELETE(":id/products", handler.RemoveProductHandler(s.service))
 	}
 }

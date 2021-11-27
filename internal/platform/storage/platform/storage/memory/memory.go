@@ -89,6 +89,19 @@ func (m *Memory) FindBasketByID(ctx context.Context, id string) (models.Basket, 
 	return basket, nil
 }
 
+func (m *Memory) RemoveBasket(ctx context.Context, basketID string) error {
+	defer m.mux.Unlock()
+
+	m.mux.Lock()
+	_, ok := m.basketStge[basketID]
+	if !ok {
+		return models.ErrBasketNotFound
+	}
+
+	delete(m.basketStge, basketID)
+	return nil
+}
+
 // RemoveProduct implements the storage.Repository interface.
 func (m *Memory) RemoveProduct(ctx context.Context, basketID string, productCode string) (models.Basket, error) {
 	defer m.mux.Unlock()

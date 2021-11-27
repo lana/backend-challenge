@@ -77,6 +77,20 @@ func (_m *Repository) FindBasketByID(ctx context.Context, id string) (models.Bas
 	return r0, r1
 }
 
+// RemoveBasket provides a mock function with given fields: ctx, id
+func (_m *Repository) RemoveBasket(ctx context.Context, id string) error {
+	ret := _m.Called(ctx, id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // RemoveProduct provides a mock function with given fields: ctx, basketID, productCode
 func (_m *Repository) RemoveProduct(ctx context.Context, basketID string, productCode string) (models.Basket, error) {
 	ret := _m.Called(ctx, basketID, productCode)

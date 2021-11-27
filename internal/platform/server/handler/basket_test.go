@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestHandler_Basket(t *testing.T) {
+func TestBasketHandler(t *testing.T) {
 	basketMock := models.Basket{
 		Code:  "4200f350-4fa5-11ec-a386-1e003b1e5256",
 		Items: make(map[string]models.Item),
@@ -61,7 +61,26 @@ func TestHandler_Basket(t *testing.T) {
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 	})
 
-	t.Run("given a invalid id request it returns 200", func(t *testing.T) {
+	t.Run("given a invalid params it returns 400", func(t *testing.T) {
+		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything).Return(models.Basket{}, nil)
+		service := lana.NewService(repositoryMock)
+
+		r := gin.New()
+		r.GET("/baskets/:id", GetBasketHandler(service))
+		req, err := http.NewRequest(http.MethodGet, "/baskets/", nil)
+		require.NoError(t, err)
+
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, req)
+
+		res := rec.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+	})
+
+	t.Run("given a invalid id request it returns 400", func(t *testing.T) {
 		repositoryMock := new(storagemocks.Repository)
 		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything).Return(models.Basket{}, models.ErrBasketNotFound)
 		service := lana.NewService(repositoryMock)
@@ -69,6 +88,66 @@ func TestHandler_Basket(t *testing.T) {
 		r := gin.New()
 		r.GET("/baskets/:id", GetBasketHandler(service))
 		req, err := http.NewRequest(http.MethodGet, "/baskets/4200f350-4fa5-11ec-a386-1e003b1e5256", nil)
+		require.NoError(t, err)
+
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, req)
+
+		res := rec.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+	})
+}
+
+func TestRemoveBasketHandler(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	t.Run("given a empty basket id it returns 400", func(t *testing.T) {
+		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("RemoveBasket", mock.Anything, mock.Anything).Return(models.ErrBasketNotFound)
+		service := lana.NewService(repositoryMock)
+
+		r := gin.New()
+		r.DELETE("/baskets/:id", RemoveBasketHandler(service))
+		req, err := http.NewRequest(http.MethodDelete, "/baskets/", nil)
+		require.NoError(t, err)
+
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, req)
+
+		res := rec.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+	})
+
+	t.Run("given a basket id it returns 200", func(t *testing.T) {
+		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("RemoveBasket", mock.Anything, mock.Anything).Return(nil)
+		service := lana.NewService(repositoryMock)
+
+		r := gin.New()
+		r.DELETE("/baskets/:id", RemoveBasketHandler(service))
+		req, err := http.NewRequest(http.MethodDelete, "/baskets/4200f350-4fa5-11ec-a386-1e003b1e5256", nil)
+		require.NoError(t, err)
+
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, req)
+
+		res := rec.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+	})
+
+	t.Run("given a invalid basket id it returns 400", func(t *testing.T) {
+		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("RemoveBasket", mock.Anything, mock.Anything).Return(models.ErrBasketNotFound)
+		service := lana.NewService(repositoryMock)
+
+		r := gin.New()
+		r.DELETE("/baskets/:id", RemoveBasketHandler(service))
+		req, err := http.NewRequest(http.MethodDelete, "/baskets/4200f350-4fa5-11ec-a386-1e003b1e5256", nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()

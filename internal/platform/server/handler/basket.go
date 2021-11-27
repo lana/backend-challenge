@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 	"patriciabonaldy/lana/internal/lana"
-	"patriciabonaldy/lana/internal/models"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,16 +30,26 @@ func GetBasketHandler(service lana.Service) gin.HandlerFunc {
 
 		basket, err := service.GetBasket(ctx, id)
 		if err != nil {
-			switch {
-			case errors.Is(err, models.ErrBasketNotFound):
-				ctx.JSON(http.StatusBadRequest, err.Error())
-				return
-			default:
-				ctx.JSON(http.StatusInternalServerError, err.Error())
-				return
-			}
+			ctx.JSON(http.StatusBadRequest, err.Error())
 		}
 
 		ctx.JSON(http.StatusOK, basket)
+	}
+}
+
+func RemoveBasketHandler(service lana.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id := ctx.Param("id")
+		if strings.Trim(id, " ") == "" {
+			ctx.Status(http.StatusBadRequest)
+			return
+		}
+
+		err := service.RemoveBasket(ctx, id)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		ctx.Status(http.StatusOK)
 	}
 }

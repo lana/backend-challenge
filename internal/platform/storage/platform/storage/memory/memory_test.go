@@ -128,6 +128,19 @@ func TestMemory_FindBasketByID(t *testing.T) {
 	}
 }
 
+func TestMemory_RemoveBaskett(t *testing.T) {
+	repository := memory.NewRepository()
+	_, err := repository.CreateBasket(context.Background(), "4200f350-4fa5-11ec-a386-1e003b1e5256")
+	require.NoError(t, err)
+
+	expectedError := errors.New("basket does not exist")
+	err = repository.RemoveBasket(context.Background(), "999999999999-11ec-a386-1e003b1e5256")
+	assert.Equal(t, expectedError, err)
+
+	err = repository.RemoveBasket(context.Background(), "4200f350-4fa5-11ec-a386-1e003b1e5256")
+	assert.NoError(t, err)
+}
+
 func TestMemory_RemoveProduct(t *testing.T) {
 	repository := memory.NewRepository()
 	var _, err = repository.CreateBasket(context.Background(), "4200f350-4fa5-11ec-a386-1e003b1e5256")

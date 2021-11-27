@@ -11,6 +11,7 @@ type Repository interface {
 	CreateBasket(ctx context.Context, id string) (models.Basket, error)
 	AddProduct(ctx context.Context, basketID, productCode string) (models.Basket, error)
 	RemoveProduct(ctx context.Context, basketID, productCode string) (models.Basket, error)
+	RemoveBasket(ctx context.Context, id string) error
 }
 
 //go:generate mockery --case=snake --outpkg=storagemocks --output=platform/storage/storagemocks --name=Repository
