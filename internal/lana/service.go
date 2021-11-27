@@ -1,6 +1,5 @@
 package lana
 
-
 // Service is the default customerService interface
 // implementation returned by customer.NewService.
 type Service struct {

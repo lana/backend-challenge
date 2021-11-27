@@ -35,18 +35,25 @@ func (_m *Repository) AddProduct(ctx context.Context, basketID string, productCo
 	return r0, r1
 }
 
-// CreateBasket provides a mock function with given fields: ctx, basket
-func (_m *Repository) CreateBasket(ctx context.Context, basket models.Basket) error {
-	ret := _m.Called(ctx, basket)
+// CreateBasket provides a mock function with given fields: ctx
+func (_m *Repository) CreateBasket(ctx context.Context) (models.Basket, error) {
+	ret := _m.Called(ctx)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, models.Basket) error); ok {
-		r0 = rf(ctx, basket)
+	var r0 models.Basket
+	if rf, ok := ret.Get(0).(func(context.Context) models.Basket); ok {
+		r0 = rf(ctx)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(models.Basket)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // FindBasketByID provides a mock function with given fields: ctx, id
@@ -63,6 +70,27 @@ func (_m *Repository) FindBasketByID(ctx context.Context, id string) (models.Bas
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RemoveProduct provides a mock function with given fields: ctx, basketID, productCode
+func (_m *Repository) RemoveProduct(ctx context.Context, basketID string, productCode string) (models.Basket, error) {
+	ret := _m.Called(ctx, basketID, productCode)
+
+	var r0 models.Basket
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) models.Basket); ok {
+		r0 = rf(ctx, basketID, productCode)
+	} else {
+		r0 = ret.Get(0).(models.Basket)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, basketID, productCode)
 	} else {
 		r1 = ret.Error(1)
 	}

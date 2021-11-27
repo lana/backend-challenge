@@ -2,9 +2,10 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"patriciabonaldy/lana/internal/lana"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
@@ -33,4 +34,3 @@ func (s *Server) Run() error {
 func (s *Server) registerRoutes() {
 	// TODO: create routes
 }
-
