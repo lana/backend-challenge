@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"patriciabonaldy/lana/internal/lana"
+	"patriciabonaldy/lana/internal/platform/server/handler"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,15 +12,14 @@ import (
 type Server struct {
 	httpAddr string
 	engine   *gin.Engine
-	// deps
-	contactService lana.Service
+	service  lana.Service
 }
 
 func New(port uint, service lana.Service) Server {
 	srv := Server{
-		engine:         gin.New(),
-		httpAddr:       fmt.Sprintf(":%d", port),
-		contactService: service,
+		engine:   gin.New(),
+		httpAddr: fmt.Sprintf(":%d", port),
+		service:  service,
 	}
 
 	srv.registerRoutes()
@@ -32,5 +32,10 @@ func (s *Server) Run() error {
 }
 
 func (s *Server) registerRoutes() {
-	// TODO: create routes
+	s.engine.GET("/health", handler.CheckHandler())
+	contact := s.engine.Group("/baskets")
+	{
+		contact.POST("", handler.CreateBasketHandler(s.service))
+		contact.GET("/:id", handler.GetBasketHandler(s.service))
+	}
 }

@@ -16,7 +16,7 @@ func TestMemory_AddProduct_and_basket_does_not_exit(t *testing.T) {
 	repository := memory.NewRepository()
 	id, _ := uuid.NewUUID()
 	_, err := repository.AddProduct(context.Background(), id.String(), "PEN")
-	assert.Equal(t, errors.Is(err, memory.ErrBasketNotFound), true)
+	assert.Equal(t, errors.Is(err, models.ErrBasketNotFound), true)
 }
 
 func TestMemory_AddProduct(t *testing.T) {

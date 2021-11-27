@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"errors"
 	"patriciabonaldy/lana/internal/models"
 	"sync"
 )
@@ -19,11 +18,6 @@ var (
 		Tshirt: {Code: Tshirt, Name: "Lana T-Shirt", Price: 20.00},
 		Mug:    {Code: Mug, Name: "Lana Coffee Mug ", Price: 7.50},
 	}
-
-	ErrBasketCreated   = errors.New("basket was created previously")
-	ErrBasketNotFound  = errors.New("basket does not exist")
-	ErrProductNotFound = errors.New("product does not exist")
-	ErrItemNotFound    = errors.New("item does not exist")
 )
 
 // Memory is a memory Repository implementation.
@@ -44,12 +38,12 @@ func (m *Memory) AddProduct(ctx context.Context, basketID string, productCode st
 	m.mux.Lock()
 	basket, ok := m.basketStge[basketID]
 	if !ok {
-		return models.Basket{}, ErrBasketNotFound
+		return models.Basket{}, models.ErrBasketNotFound
 	}
 
 	product, ok := productMap[productCode]
 	if !ok {
-		return models.Basket{}, ErrProductNotFound
+		return models.Basket{}, models.ErrProductNotFound
 	}
 
 	item, ok := basket.Items[product.Code]
@@ -73,11 +67,10 @@ func (m *Memory) CreateBasket(ctx context.Context, id string) (models.Basket, er
 	defer m.mux.Unlock()
 
 	m.mux.Lock()
-	/*id, err := uuid.NewUUID()
-	if err != nil {
-		return models.Basket{}, err
+	if _, exist := m.basketStge[id]; exist {
+		return models.Basket{}, models.ErrBasketCreated
 	}
-	*/
+
 	basket := models.NewBasket(id)
 	m.basketStge[basket.Code] = basket
 	return basket, nil
@@ -90,7 +83,7 @@ func (m *Memory) FindBasketByID(ctx context.Context, id string) (models.Basket, 
 	m.mux.Lock()
 	basket, ok := m.basketStge[id]
 	if !ok {
-		return models.Basket{}, ErrBasketNotFound
+		return models.Basket{}, models.ErrBasketNotFound
 	}
 
 	return basket, nil
@@ -103,17 +96,17 @@ func (m *Memory) RemoveProduct(ctx context.Context, basketID string, productCode
 	m.mux.Lock()
 	basket, ok := m.basketStge[basketID]
 	if !ok {
-		return models.Basket{}, ErrBasketNotFound
+		return models.Basket{}, models.ErrBasketNotFound
 	}
 
 	product, ok := productMap[productCode]
 	if !ok {
-		return models.Basket{}, ErrProductNotFound
+		return models.Basket{}, models.ErrProductNotFound
 	}
 
 	_, ok = basket.Items[product.Code]
 	if !ok {
-		return models.Basket{}, ErrItemNotFound
+		return models.Basket{}, models.ErrItemNotFound
 	}
 
 	delete(basket.Items, product.Code)

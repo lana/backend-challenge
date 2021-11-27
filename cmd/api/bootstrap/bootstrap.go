@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"patriciabonaldy/lana/internal/lana"
 	"patriciabonaldy/lana/internal/platform/server"
+	"patriciabonaldy/lana/internal/platform/storage/platform/storage/memory"
 )
 
 const (
@@ -11,7 +12,8 @@ const (
 
 // Run application
 func Run() error {
-	lanaService := lana.NewService()
+	repository := memory.NewRepository()
+	lanaService := lana.NewService(repository)
 	srv := server.New(port, lanaService)
 	return srv.Run()
 }
