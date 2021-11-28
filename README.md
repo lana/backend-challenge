@@ -43,6 +43,38 @@ Examples:
     Items: PEN, TSHIRT, PEN, PEN, MUG, TSHIRT, TSHIRT
     Total: 62.50€
 
+**Setup:**
+- Run follow command:
+~~~bash
+make all
+~~~
+
+## Creation a Docker
+
+~~~bash
+make build-docker
+~~~
+
+## Testing
+
+~~~bash
+make test
+~~~
+
+## Run app
+
+~~~bash
+docker-compose up
+~~~
+
+## Stop app
+
+~~~bash
+docker-compose down
+~~~
+
+
+
 **The solution should:**
 
 - Build and execute in a Unix operating system.

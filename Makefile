@@ -4,11 +4,11 @@ PACKAGES = $(shell go list ./...)
 PACKAGES_PATH = $(shell go list -f '{{ .Dir }}' ./...)
 LATEST_DEPENDENCIES = $(shell go list -f '{{if not (or .Main .Indirect)}}{{.Path}}{{end}}' -m all)
 
-APP_NAME=jumia-api
+APP_NAME=lana
 VERSION := 0.0.1
 
 .PHONY: all
-all: check_tools ensure-deps build fmt imports test
+all: check_tools ensure-deps fmt imports test
 
 .PHONY: check_tools
 check_tools:
@@ -50,3 +50,11 @@ test-cover:
 	@go test ./... -covermode=atomic -coverprofile=/tmp/coverage.out -coverpkg=./... -count=1
 	@go tool cover -func /tmp/coverage.out | tail -n 1 | awk '{ print "=> Total coverage: " $$3 }'
 	@go tool cover -html=/tmp/coverage.out
+
+build-docker: build
+	@docker build --force-rm -t $(APP_NAME):$(VERSION) .
+	@docker tag $(APP_NAME):$(VERSION) $(APP_NAME):latest
+	@echo "${YL}Finished${NC}"
+	@echo "${YL}you can start app with: docker-compose down && docker-compose up -d${NC}"
+
+setup: all build-docker
