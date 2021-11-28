@@ -3,11 +3,13 @@ package handler
 import (
 	"net/http"
 	"patriciabonaldy/lana/internal/lana"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
+// CreateBasketHandler create a new basket.
+// return 201 if this could be created.
+// Otherwise, it will return 500
 func CreateBasketHandler(service lana.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		basket, err := service.CreateBasket(ctx)
@@ -20,6 +22,10 @@ func CreateBasketHandler(service lana.Service) gin.HandlerFunc {
 	}
 }
 
+// GetBasketHandler return basket.
+// require a basket id and
+// return 200 if this is ok.
+// otherwise will return 400
 func GetBasketHandler(service lana.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
@@ -37,10 +43,14 @@ func GetBasketHandler(service lana.Service) gin.HandlerFunc {
 	}
 }
 
+// RemoveBasketHandler remove a basket.
+// require a basket id.
+// it will return 200 if this is ok.
+// otherwise will return 400
 func RemoveBasketHandler(service lana.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
-		if strings.Trim(id, " ") == "" {
+		if id == "" {
 			ctx.Status(http.StatusBadRequest)
 			return
 		}
@@ -51,5 +61,27 @@ func RemoveBasketHandler(service lana.Service) gin.HandlerFunc {
 		}
 
 		ctx.Status(http.StatusOK)
+	}
+}
+
+// CheckoutBasketHandler close a basket.
+// require a basket id.
+// it will return 200 if this is ok.
+// otherwise will return 400
+func CheckoutBasketHandler(service lana.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var req lana.BasketRequest
+		if err := ctx.BindJSON(&req); err != nil {
+			ctx.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		basket, err := service.CheckoutBasket(ctx, req)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		ctx.JSON(http.StatusOK, basket)
 	}
 }

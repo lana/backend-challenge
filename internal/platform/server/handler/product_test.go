@@ -31,7 +31,7 @@ func TestAddProductHandler(t *testing.T) {
 					Price: 20,
 				},
 				Quantity: 1,
-				Discount: 0,
+				Total:    0,
 			},
 		},
 		Total: 0,
@@ -41,7 +41,32 @@ func TestAddProductHandler(t *testing.T) {
 
 	t.Run("given a valid id request it returns 200", func(t *testing.T) {
 		repositoryMock := new(storagemocks.Repository)
-		repositoryMock.On("AddProduct", mock.Anything, mock.Anything, mock.Anything).Return(basketExpected, nil)
+		itemMock := models.Item{
+			Product: models.Product{
+				Code:  "Tshirt",
+				Name:  "Lana T-Shirt",
+				Price: 20,
+			},
+		}
+
+		itemMock.Quantity = 1
+		itemMock.Total = 20
+		basketExpected := models.Basket{
+			Code: "4200f350-4fa5-11ec-a386-1e003b1e5256",
+			Items: map[string]models.Item{
+				"Tshirt": itemMock,
+			},
+			Total: 20,
+		}
+		basketmock := models.Basket{
+			Code:  "4200f350-4fa5-11ec-a386-1e003b1e5256",
+			Items: make(map[string]models.Item),
+			Total: 0,
+		}
+		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything).Return(basketmock, nil).Once()
+		repositoryMock.On("GetItem", mock.Anything, mock.Anything, mock.Anything).Return(models.Item{}, models.ErrItemNotFound).Once()
+		repositoryMock.On("CreateItem", mock.Anything, mock.Anything, mock.Anything).Return(itemMock, nil)
+		repositoryMock.On("UpdateBasket", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(basketExpected, nil).Once()
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
@@ -63,7 +88,7 @@ func TestAddProductHandler(t *testing.T) {
 
 	t.Run("given a invalid request it returns 400", func(t *testing.T) {
 		repositoryMock := new(storagemocks.Repository)
-		repositoryMock.On("AddProduct", mock.Anything, mock.Anything, mock.Anything).Return(basketExpected, nil)
+		repositoryMock.On("CreateItem", mock.Anything, mock.Anything, mock.Anything).Return(basketExpected, nil)
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
@@ -85,7 +110,7 @@ func TestAddProductHandler(t *testing.T) {
 
 	t.Run("given a invalid BasketID it returns 400", func(t *testing.T) {
 		repositoryMock := new(storagemocks.Repository)
-		repositoryMock.On("AddProduct", mock.Anything, mock.Anything, mock.Anything).
+		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything, mock.Anything).
 			Return(models.Basket{}, models.ErrBasketNotFound)
 
 		service := lana.NewService(repositoryMock)
@@ -122,6 +147,7 @@ func TestRemoveProductHandler(t *testing.T) {
 
 	t.Run("given a valid request it returns 200", func(t *testing.T) {
 		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything).Return(basketExpected, nil)
 		repositoryMock.On("RemoveProduct", mock.Anything, mock.Anything, mock.Anything).Return(basketExpected, nil)
 		service := lana.NewService(repositoryMock)
 
@@ -144,6 +170,7 @@ func TestRemoveProductHandler(t *testing.T) {
 
 	t.Run("given a invalid product inside request it returns 400", func(t *testing.T) {
 		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything).Return(basketExpected, nil)
 		repositoryMock.On("RemoveProduct", mock.Anything, mock.Anything, mock.Anything).Return(basketExpected, models.ErrProductNotFound)
 		service := lana.NewService(repositoryMock)
 

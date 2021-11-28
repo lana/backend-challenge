@@ -3,21 +3,8 @@ package memory
 import (
 	"context"
 	"patriciabonaldy/lana/internal/models"
+	"patriciabonaldy/lana/internal/platform/storage"
 	"sync"
-)
-
-const (
-	Pen    = "Pen"
-	Tshirt = "Tshirt"
-	Mug    = "Mug"
-)
-
-var (
-	productMap = map[string]models.Product{
-		Pen:    {Code: Pen, Name: "Lana Pen", Price: 5.00},
-		Tshirt: {Code: Tshirt, Name: "Lana T-Shirt", Price: 20.00},
-		Mug:    {Code: Mug, Name: "Lana Coffee Mug ", Price: 7.50},
-	}
 )
 
 // Memory is a memory Repository implementation.
@@ -27,37 +14,34 @@ type Memory struct {
 }
 
 // NewRepository initializes a memory implementation of storage.Repository.
-func NewRepository() *Memory {
+func NewRepository() storage.Repository {
 	return &Memory{basketStge: make(map[string]models.Basket)}
 }
 
-// AddProduct implements the storage.Repository interface.
-func (m *Memory) AddProduct(ctx context.Context, basketID string, productCode string) (models.Basket, error) {
+// GetItem implements the storage.Repository interface.
+func (m *Memory) GetItem(ctx context.Context, basketID string, productCode string) (models.Item, error) {
 	defer m.mux.Unlock()
 
 	m.mux.Lock()
-	basket, ok := m.basketStge[basketID]
+	item, ok := m.basketStge[basketID].Items[productCode]
+	if !ok {
+		return models.Item{}, models.ErrItemNotFound
+	}
+
+	return item, nil
+}
+
+// UpdateBasket implements the storage.Repository interface.
+func (m *Memory) UpdateBasket(ctx context.Context, basket models.Basket) (models.Basket, error) {
+	defer m.mux.Unlock()
+
+	m.mux.Lock()
+	_, ok := m.basketStge[basket.Code]
 	if !ok {
 		return models.Basket{}, models.ErrBasketNotFound
 	}
 
-	product, ok := productMap[productCode]
-	if !ok {
-		return models.Basket{}, models.ErrProductNotFound
-	}
-
-	item, ok := basket.Items[product.Code]
-	if !ok {
-		basket.Items[productCode] = models.Item{
-			Product:  product,
-			Quantity: 1,
-		}
-
-		return basket, nil
-	}
-
-	item.Quantity++
-	basket.Items[productCode] = item
+	m.basketStge[basket.Code] = basket
 
 	return basket, nil
 }
@@ -89,6 +73,7 @@ func (m *Memory) FindBasketByID(ctx context.Context, id string) (models.Basket, 
 	return basket, nil
 }
 
+// RemoveBasket implements the storage.Repository interface.
 func (m *Memory) RemoveBasket(ctx context.Context, basketID string) error {
 	defer m.mux.Unlock()
 
@@ -112,17 +97,15 @@ func (m *Memory) RemoveProduct(ctx context.Context, basketID string, productCode
 		return models.Basket{}, models.ErrBasketNotFound
 	}
 
-	product, ok := productMap[productCode]
-	if !ok {
-		return models.Basket{}, models.ErrProductNotFound
-	}
-
-	_, ok = basket.Items[product.Code]
+	item, ok := basket.Items[productCode]
 	if !ok {
 		return models.Basket{}, models.ErrItemNotFound
 	}
 
-	delete(basket.Items, product.Code)
+	delete(basket.Items, productCode)
+
+	basket.Total -= item.Total
+	m.basketStge[basketID] = basket
 
 	return basket, nil
 }

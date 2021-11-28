@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"patriciabonaldy/lana/internal/lana"
@@ -147,6 +149,7 @@ func TestRemoveBasketHandler(t *testing.T) {
 
 		r := gin.New()
 		r.DELETE("/baskets/:id", RemoveBasketHandler(service))
+
 		req, err := http.NewRequest(http.MethodDelete, "/baskets/4200f350-4fa5-11ec-a386-1e003b1e5256", nil)
 		require.NoError(t, err)
 
@@ -157,5 +160,112 @@ func TestRemoveBasketHandler(t *testing.T) {
 		defer res.Body.Close()
 
 		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+	})
+}
+
+func TestCheckoutBasketHandler(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	t.Run("given a empty basket id it returns 400", func(t *testing.T) {
+		repositoryMock := new(storagemocks.Repository)
+		service := lana.NewService(repositoryMock)
+
+		r := gin.New()
+		r.POST("/baskets/checkout", CheckoutBasketHandler(service))
+
+		body, _ := json.Marshal(lana.BasketRequest{})
+		reader := bytes.NewBuffer(body)
+		req, err := http.NewRequest(http.MethodPost, "/baskets/checkout", reader)
+		require.NoError(t, err)
+
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, req)
+
+		res := rec.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+	})
+
+	t.Run("given a invalid basket id it returns 400", func(t *testing.T) {
+		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything).Return(models.Basket{}, models.ErrBasketNotFound)
+		service := lana.NewService(repositoryMock)
+
+		r := gin.New()
+		r.POST("/baskets/checkout", CheckoutBasketHandler(service))
+
+		body, _ := json.Marshal(lana.BasketRequest{BasketID: "4200f350-4fa5-11ec-a386-1e003b1e5256"})
+		reader := bytes.NewBuffer(body)
+		req, err := http.NewRequest(http.MethodPost, "/baskets/checkout", reader)
+		require.NoError(t, err)
+
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, req)
+
+		res := rec.Result()
+		defer res.Body.Close()
+
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+	})
+	t.Run("given a basket id it returns 200", func(t *testing.T) {
+		basketMock := models.Basket{
+			Code: "4200f350-4fa5-11ec-a386-1e003b1e5256",
+			Items: map[string]models.Item{
+				"Tshirt": {
+					Product: models.Product{
+						Code:  "Tshirt",
+						Name:  "Lana T-Shirt",
+						Price: 20,
+					},
+					Quantity: 5,
+					Total:    100,
+				},
+			},
+			Total: 100,
+		}
+
+		repositoryMock := new(storagemocks.Repository)
+		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything).Return(basketMock, nil)
+
+		basketMock2 := models.Basket{
+			Code: "4200f350-4fa5-11ec-a386-1e003b1e5256",
+			Items: map[string]models.Item{
+				"Tshirt": {
+					Product: models.Product{
+						Code:  "Tshirt",
+						Name:  "Lana T-Shirt",
+						Price: 20,
+					},
+					Quantity: 5,
+					Total:    75,
+				},
+			},
+			Total: 75,
+			Close: true,
+		}
+		repositoryMock.On("UpdateBasket", mock.Anything, mock.Anything).Return(basketMock2, nil)
+		service := lana.NewService(repositoryMock)
+
+		r := gin.New()
+		r.POST("/baskets/checkout", CheckoutBasketHandler(service))
+
+		body, _ := json.Marshal(lana.BasketRequest{BasketID: "4200f350-4fa5-11ec-a386-1e003b1e5256"})
+		reader := bytes.NewBuffer(body)
+		req, err := http.NewRequest(http.MethodPost, "/baskets/checkout", reader)
+		require.NoError(t, err)
+
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, req)
+
+		res := rec.Result()
+		defer res.Body.Close()
+
+		var response models.Basket
+		err = json.NewDecoder(res.Body).Decode(&response)
+		require.NoError(t, err)
+
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+		assert.Equal(t, basketMock2, response)
 	})
 }

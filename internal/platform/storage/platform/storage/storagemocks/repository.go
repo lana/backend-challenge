@@ -14,27 +14,6 @@ type Repository struct {
 	mock.Mock
 }
 
-// AddProduct provides a mock function with given fields: ctx, basketID, productCode
-func (_m *Repository) AddProduct(ctx context.Context, basketID string, productCode string) (models.Basket, error) {
-	ret := _m.Called(ctx, basketID, productCode)
-
-	var r0 models.Basket
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) models.Basket); ok {
-		r0 = rf(ctx, basketID, productCode)
-	} else {
-		r0 = ret.Get(0).(models.Basket)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
-		r1 = rf(ctx, basketID, productCode)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // CreateBasket provides a mock function with given fields: ctx, id
 func (_m *Repository) CreateBasket(ctx context.Context, id string) (models.Basket, error) {
 	ret := _m.Called(ctx, id)
@@ -77,6 +56,27 @@ func (_m *Repository) FindBasketByID(ctx context.Context, id string) (models.Bas
 	return r0, r1
 }
 
+// GetItem provides a mock function with given fields: ctx, basketID, productCode
+func (_m *Repository) GetItem(ctx context.Context, basketID string, productCode string) (models.Item, error) {
+	ret := _m.Called(ctx, basketID, productCode)
+
+	var r0 models.Item
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) models.Item); ok {
+		r0 = rf(ctx, basketID, productCode)
+	} else {
+		r0 = ret.Get(0).(models.Item)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, basketID, productCode)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RemoveBasket provides a mock function with given fields: ctx, id
 func (_m *Repository) RemoveBasket(ctx context.Context, id string) error {
 	ret := _m.Called(ctx, id)
@@ -105,6 +105,27 @@ func (_m *Repository) RemoveProduct(ctx context.Context, basketID string, produc
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
 		r1 = rf(ctx, basketID, productCode)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateBasket provides a mock function with given fields: ctx, basketID
+func (_m *Repository) UpdateBasket(ctx context.Context, basketID models.Basket) (models.Basket, error) {
+	ret := _m.Called(ctx, basketID)
+
+	var r0 models.Basket
+	if rf, ok := ret.Get(0).(func(context.Context, models.Basket) models.Basket); ok {
+		r0 = rf(ctx, basketID)
+	} else {
+		r0 = ret.Get(0).(models.Basket)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, models.Basket) error); ok {
+		r1 = rf(ctx, basketID)
 	} else {
 		r1 = ret.Error(1)
 	}
