@@ -73,6 +73,31 @@ docker-compose up
 docker-compose down
 ~~~
 
+## Endpoints
+
+name                         method          description
+- /health                    GET             Check status of app (live/died)
+
+- /baskets                   POST            Create a new basket
+- /baskets:id                GET             Get a basket
+- /baskets:id                DELETE          delete a basket
+
+- /baskets/products          POST            ReceiveCreate a payload with
+                                             BasketID    string `json:"basket_id" binding:"required"`
+                                             ProductCode string `json:"product_code" binding:"required"`
+                                             return basket with a new product 
+
+- /baskets/products          DELETE          ReceiveCreate a payload with
+                                             BasketID    string `json:"basket_id" binding:"required"`
+                                             ProductCode string `json:"product_code" binding:"required"`
+                                             Return basket without this product
+
+- /baskets/checkout          POST            ReceiveCreate a payload with
+                                             BasketID    string `json:"basket_id" binding:"required"`
+                                             will close the basket and calculate the discount
+                                             Return basket without this product
+
+
 
 
 **The solution should:**
