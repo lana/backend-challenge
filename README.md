@@ -43,23 +43,121 @@ Examples:
     Items: PEN, TSHIRT, PEN, PEN, MUG, TSHIRT, TSHIRT
     Total: 62.50€
 
-**The solution should:**
+**Setup:**
+- Run follow command:
+~~~bash
+make setup
+~~~
 
-- Build and execute in a Unix operating system.
-- Focus on solving the business problem (less boilerplate!)
-- Have a clear structure.
-- Be easy to grow with new functionality.
-- Don't include binaries, and use a dependency management tool.
+## Creation a Docker
 
-**Bonus Points For:**
+~~~bash
+make build-docker
+~~~
 
-- Be written in Go (let us know if this is your first time!)
-- Unit/Functional tests
-- Dealing with money as integers
-- Formatting money output
-- Useful comments
-- Documentation
-- Docker images / CI
-- Commit messages (include .git in zip)
-- Thread-safety
-- Clear scalability
+## Testing
+
+~~~bash
+make test
+~~~
+
+## Run app
+
+~~~bash
+docker-compose up
+~~~
+
+## Stop app
+
+~~~bash
+docker-compose down
+~~~
+
+## Endpoints
+
+name                                   method          description
+- /health                              GET             Check status of app is (live/died)
+
+- /baskets                             POST            Create a new basket
+- /baskets/:id                         GET             Get a basket
+- /baskets/:id                         DELETE          delete a basket
+
+- /baskets/:id/products/:code          POST            return basket with a new product 
+
+- /baskets/:id/products/:code          DELETE          Return basket without this product
+
+- /baskets/:id/checkout                POST            will close the basket and calculate the discount
+                                                       Return basket without this product
+
+
+## Client
+
+To run client
+~~~bash
+go run cmd/client/cli.go
+
+Usage:
+  app [command]
+
+Examples:
+you can us the follow commands: create/add/remove/checkout
+
+Available Commands:
+  basket      call different operations
+Flags:
+  -h, --help   help for app
+
+
+~~~
+EXAMPLES:
+
+* create a new basket
+~~~bash
+go run cmd/client/cli.go basket create
+
+output:
+
+Basket created
+{"Code":"f855f846-5057-11ec-b55b-1e003b1e5256","Items":{},"Total":0,"Close":false}
+~~~
+
+* remove basket
+~~~bash
+go run cmd/client/cli.go basket remove fa4ae6e8-5057-11ec-b55b-1e003b1e5256
+
+output:
+
+basket ID deleted
+~~~
+
+* add a new product to a basket
+~~~bash
+go run cmd/client/cli.go basket add f855f846-5057-11ec-b55b-1e003b1e5256 Pen
+
+output:
+
+product added
+~~~
+
+* close basket and get total amount
+~~~bash
+go run cmd/client/cli.go basket checkout f855f846-5057-11ec-b55b-1e003b1e5256
+
+output:
+
+Basket ID: f855f846-5057-11ec-b55b-1e003b1e5256
+Items:
+      Item: Mug
+      Quantity: 1      Unit price: 7.5
+      Total With Discount:         7.5
+      Item: Pen
+      Quantity: 4      Unit price: 5
+      Total With Discount:         15
+      Item: Tshirt
+      Quantity: 4      Unit price: 20
+      Total With Discount:         60
+----------------------------------------
+Amount Total: 82.5
+
+~~~
+

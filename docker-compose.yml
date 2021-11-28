@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+
+  api:
+    image: lana:latest
+    container_name: lana
+    ports:
+      - "8080:8080"
