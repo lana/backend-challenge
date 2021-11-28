@@ -1,8 +1,7 @@
 package handler
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"patriciabonaldy/lana/internal/lana"
@@ -20,21 +19,6 @@ func TestAddProductHandler(t *testing.T) {
 	request := lana.ProductRequest{
 		BasketID:    "4200f350-4fa5-11ec-a386-1e003b1e5256",
 		ProductCode: "Tshirt",
-	}
-	basketExpected := models.Basket{
-		Code: "4200f350-4fa5-11ec-a386-1e003b1e5256",
-		Items: map[string]models.Item{
-			"Tshirt": {
-				Product: models.Product{
-					Code:  "Tshirt",
-					Name:  "Lana T-Shirt",
-					Price: 20,
-				},
-				Quantity: 1,
-				Total:    0,
-			},
-		},
-		Total: 0,
 	}
 
 	gin.SetMode(gin.TestMode)
@@ -70,11 +54,10 @@ func TestAddProductHandler(t *testing.T) {
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
-		r.POST("/baskets/products", AddProductHandler(service))
+		r.POST("/baskets/:id/products/:code", AddProductHandler(service))
 
-		body, _ := json.Marshal(request)
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodPost, "/baskets/products", reader)
+		url := fmt.Sprintf("/baskets/%s/products/%s", request.BasketID, request.ProductCode)
+		req, err := http.NewRequest(http.MethodPost, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()
@@ -86,28 +69,6 @@ func TestAddProductHandler(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
 	})
 
-	t.Run("given a invalid request it returns 400", func(t *testing.T) {
-		repositoryMock := new(storagemocks.Repository)
-		repositoryMock.On("CreateItem", mock.Anything, mock.Anything, mock.Anything).Return(basketExpected, nil)
-		service := lana.NewService(repositoryMock)
-
-		r := gin.New()
-		r.POST("/baskets/products", AddProductHandler(service))
-
-		body, _ := json.Marshal(lana.ProductRequest{})
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodPost, "/baskets/products", reader)
-		require.NoError(t, err)
-
-		rec := httptest.NewRecorder()
-		r.ServeHTTP(rec, req)
-
-		res := rec.Result()
-		defer res.Body.Close()
-
-		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
-	})
-
 	t.Run("given a invalid BasketID it returns 400", func(t *testing.T) {
 		repositoryMock := new(storagemocks.Repository)
 		repositoryMock.On("FindBasketByID", mock.Anything, mock.Anything, mock.Anything).
@@ -115,11 +76,10 @@ func TestAddProductHandler(t *testing.T) {
 
 		service := lana.NewService(repositoryMock)
 		r := gin.New()
-		r.POST("/baskets/products", AddProductHandler(service))
+		r.POST("/baskets/:id/products/:code", AddProductHandler(service))
 
-		body, _ := json.Marshal(request)
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodPost, "/baskets/products", reader)
+		url := fmt.Sprintf("/baskets/%s/products/%s", request.BasketID, request.ProductCode)
+		req, err := http.NewRequest(http.MethodPost, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()
@@ -152,11 +112,10 @@ func TestRemoveProductHandler(t *testing.T) {
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
-		r.DELETE("/baskets/products", RemoveProductHandler(service))
+		r.DELETE("/baskets/:id/products/:code", RemoveProductHandler(service))
 
-		body, _ := json.Marshal(request)
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodDelete, "/baskets/products", reader)
+		url := fmt.Sprintf("/baskets/%s/products/%s", request.BasketID, request.ProductCode)
+		req, err := http.NewRequest(http.MethodDelete, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()
@@ -175,11 +134,10 @@ func TestRemoveProductHandler(t *testing.T) {
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
-		r.DELETE("/baskets/products", RemoveProductHandler(service))
+		r.DELETE("/baskets/:id/products/:code", RemoveProductHandler(service))
 
-		body, _ := json.Marshal(request)
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodDelete, "/baskets/products", reader)
+		url := fmt.Sprintf("/baskets/%s/products/%s", request.BasketID, request.ProductCode)
+		req, err := http.NewRequest(http.MethodDelete, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()
@@ -195,11 +153,10 @@ func TestRemoveProductHandler(t *testing.T) {
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
-		r.DELETE("/baskets/products", RemoveProductHandler(service))
+		r.DELETE("/baskets/:id/products/:code", RemoveProductHandler(service))
 
-		body, _ := json.Marshal(lana.ProductRequest{})
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodDelete, "/baskets/products", reader)
+		url := fmt.Sprintf("/baskets/%s/products/%s", "6767868768", "9890890890890")
+		req, err := http.NewRequest(http.MethodDelete, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()

@@ -169,9 +169,9 @@ func (s Service) RemoveProduct(ctx context.Context, request ProductRequest) (mod
 // require a basket id
 // it will return a basket if this is ok.
 // otherwise will return  error
-func (s Service) CheckoutBasket(ctx context.Context, request BasketRequest) (models.Basket, error) {
+func (s Service) CheckoutBasket(ctx context.Context, basketID string) (models.Basket, error) {
 	var basket models.Basket
-	basket, err := s.repository.FindBasketByID(ctx, request.BasketID)
+	basket, err := s.repository.FindBasketByID(ctx, basketID)
 	if err != nil {
 		return models.Basket{}, err
 	}

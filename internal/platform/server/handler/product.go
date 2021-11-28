@@ -12,12 +12,21 @@ import (
 // Otherwise, it will return 500
 func AddProductHandler(service lana.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req lana.ProductRequest
-		if err := ctx.BindJSON(&req); err != nil {
-			ctx.JSON(http.StatusBadRequest, err.Error())
+		id := ctx.Param("id")
+		if id == "" {
+			ctx.Status(http.StatusBadRequest)
 			return
 		}
 
+		code := ctx.Param("code")
+		if code == "" {
+			ctx.Status(http.StatusBadRequest)
+			return
+		}
+		req := lana.ProductRequest{
+			BasketID:    id,
+			ProductCode: code,
+		}
 		_, err := service.AddProduct(ctx, req)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err.Error())
@@ -34,12 +43,21 @@ func AddProductHandler(service lana.Service) gin.HandlerFunc {
 // otherwise will return 400
 func RemoveProductHandler(service lana.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req lana.ProductRequest
-		if err := ctx.BindJSON(&req); err != nil {
-			ctx.JSON(http.StatusBadRequest, err.Error())
+		id := ctx.Param("id")
+		if id == "" {
+			ctx.Status(http.StatusBadRequest)
 			return
 		}
 
+		code := ctx.Param("code")
+		if code == "" {
+			ctx.Status(http.StatusBadRequest)
+			return
+		}
+		req := lana.ProductRequest{
+			BasketID:    id,
+			ProductCode: code,
+		}
 		basket, err := service.RemoveProduct(ctx, req)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err.Error())

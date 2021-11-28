@@ -285,11 +285,9 @@ func TestService_CheckoutBasket(t *testing.T) {
 	repositoryMock.On("UpdateBasket", mock.Anything, mock.Anything).Return(basketExpected, nil)
 
 	service := NewService(repositoryMock)
-	request := BasketRequest{
-		BasketID: "4200f350-4fa5-11ec-a386-1e003b1e5256",
-	}
+	basketID := "4200f350-4fa5-11ec-a386-1e003b1e5256"
 
-	basket, err := service.CheckoutBasket(context.Background(), request)
+	basket, err := service.CheckoutBasket(context.Background(), basketID)
 	assert.NoError(t, err)
 	assert.Equal(t, basketExpected, basket)
 }

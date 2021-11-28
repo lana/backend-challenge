@@ -70,13 +70,13 @@ func RemoveBasketHandler(service lana.Service) gin.HandlerFunc {
 // otherwise will return 400
 func CheckoutBasketHandler(service lana.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req lana.BasketRequest
-		if err := ctx.BindJSON(&req); err != nil {
-			ctx.JSON(http.StatusBadRequest, err.Error())
+		id := ctx.Param("id")
+		if id == "" {
+			ctx.Status(http.StatusBadRequest)
 			return
 		}
 
-		basket, err := service.CheckoutBasket(ctx, req)
+		basket, err := service.CheckoutBasket(ctx, id)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err.Error())
 			return

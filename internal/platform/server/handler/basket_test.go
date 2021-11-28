@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"patriciabonaldy/lana/internal/lana"
@@ -171,11 +171,10 @@ func TestCheckoutBasketHandler(t *testing.T) {
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
-		r.POST("/baskets/checkout", CheckoutBasketHandler(service))
+		r.POST("/baskets/:id/checkout", CheckoutBasketHandler(service))
 
-		body, _ := json.Marshal(lana.BasketRequest{})
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodPost, "/baskets/checkout", reader)
+		url := fmt.Sprintf("/baskets/%s/checkout", "")
+		req, err := http.NewRequest(http.MethodPost, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()
@@ -193,11 +192,10 @@ func TestCheckoutBasketHandler(t *testing.T) {
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
-		r.POST("/baskets/checkout", CheckoutBasketHandler(service))
+		r.POST("/baskets/:id/checkout", CheckoutBasketHandler(service))
 
-		body, _ := json.Marshal(lana.BasketRequest{BasketID: "4200f350-4fa5-11ec-a386-1e003b1e5256"})
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodPost, "/baskets/checkout", reader)
+		url := fmt.Sprintf("/baskets/%s/checkout", "667678678678")
+		req, err := http.NewRequest(http.MethodPost, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()
@@ -248,11 +246,10 @@ func TestCheckoutBasketHandler(t *testing.T) {
 		service := lana.NewService(repositoryMock)
 
 		r := gin.New()
-		r.POST("/baskets/checkout", CheckoutBasketHandler(service))
+		r.POST("/baskets/:id/checkout", CheckoutBasketHandler(service))
 
-		body, _ := json.Marshal(lana.BasketRequest{BasketID: "4200f350-4fa5-11ec-a386-1e003b1e5256"})
-		reader := bytes.NewBuffer(body)
-		req, err := http.NewRequest(http.MethodPost, "/baskets/checkout", reader)
+		url := fmt.Sprintf("/baskets/%s/checkout", "4200f350-4fa5-11ec-a386-1e003b1e5256")
+		req, err := http.NewRequest(http.MethodPost, url, nil)
 		require.NoError(t, err)
 
 		rec := httptest.NewRecorder()

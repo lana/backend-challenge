@@ -38,8 +38,8 @@ func (s *Server) registerRoutes() {
 		basket.POST("", handler.CreateBasketHandler(s.service))
 		basket.GET("/:id", handler.GetBasketHandler(s.service))
 		basket.DELETE(":id", handler.RemoveBasketHandler(s.service))
-		basket.POST("/checkout", handler.CheckoutBasketHandler(s.service))
-		basket.POST("/products", handler.AddProductHandler(s.service))
-		basket.DELETE("/products", handler.RemoveProductHandler(s.service))
+		basket.POST("/:id/checkout", handler.CheckoutBasketHandler(s.service))
+		basket.POST("/:id/products/:code", handler.AddProductHandler(s.service))
+		basket.DELETE("/:id/products/:code", handler.RemoveProductHandler(s.service))
 	}
 }
